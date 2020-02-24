@@ -1,0 +1,41 @@
+program:- jproba.
+
+jproba:- write('{ "jproba": {'), usuarios.
+
+usuarios:- read(X),(X='usuario'->write('"usuarios":['), usuarioObj; (X='finUsuarios'->finUsuarios)).
+usuarioObj:- write('{'),write('"nUsuario":'),read(X),write('"'),write(X),write('",'),ontologias.
+usuarioOpts:- read(X),(X='usuario'->(write(','),usuarioObj); (X='finUsuarios'->finUsuarios)).
+
+ontologias:- read(X),(X='ontologia'->write('"ontologias":['), ontologiaObj; (X='finOntologias'->write('"ontologias":['),finOntologias)).
+ontologiaObj:- write('{'),write('"nOntologia":'),read(X),write('"'),write(X),write('",'),objetos.
+ontologiaOpts:- read(X),(X='ontologia'->(write(','),ontologiaObj); (X='finOntologias'->finOntologias)).
+
+objetos:- read(X),(X='objeto'->write('"objetos":['), objetoObj; (X='finObjetos'->finObjetos)).
+objetoObj:- write('{'),write('"nObjeto":'),read(X),write('"'),write(X),write('",'),atributos.
+objetoOpts:- read(X),(X='objeto'->(write(','),objetoObj); (X='finObjetos'->finObjetos)).
+
+atributos:- read(X),(X='atributo'->write('"atributos":['), atributoObj; (X='finAtributos'->write('"atributos":['), finAtributos)).
+atributoObj:- write('{'),write('"'),read(X),write(X),write('": "'),tipoatributo(X).
+atributoOpts:- read(X),(X='atributo'->(write(','),atributoObj); (X='finAtributos'->finAtributos)).
+
+tipoatributo(M):- read(X), (X='metodo'->metodo(M); write(X), write('"'),atributoOpts).
+metodo(M):- write('function() {'),a2,write('return '),write(M),write(')"'), atributoOpts .
+a2:- read(X),( X='decision'->decision;a3(X)).
+a3(X):-(X='asignacion'->asignacion;(X='fin'->write('}'))).
+
+decision:- write('if('),condicion,write(')'),verdadero,falso.
+condicion:- read(X), write(X).
+asignacion:- read(X), write(X), write('='), read(Y), write(Y), write(';').
+
+verdadero:- write('{'),a2,write('}').
+falso:- write('else {'),a2,write('}'),atributoOpts.
+
+valorOpts:- read(X),(X='valor'->(write(','),valorObj); (X='finValores'->finValores)).
+
+
+finAtributos:- write('] }'),objetoOpts.
+finObjetos:- write(']}'), ontologiaOpts.
+finOntologias:- write(']}'), usuarioOpts.
+finUsuarios:- write(']}'), finjproba.
+finjproba:-  write('}').
+:-program.
